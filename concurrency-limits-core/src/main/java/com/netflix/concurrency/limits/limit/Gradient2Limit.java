@@ -222,6 +222,10 @@ public final class Gradient2Limit extends AbstractLimit {
         final double shortRtt = this.shortRtt.add(rtt).doubleValue();
         final double longRtt = this.longRtt.add(rtt).doubleValue();
 
+        shortRttSampleListener.addSample(shortRtt);
+        longRttSampleListener.addSample(longRtt);
+        queueSizeSampleListener.addSample(queueSize);
+
         // Under steady state we expect the short and long term RTT to whipsaw.  We can identify that a system is under
         // long term load when there is no crossover detected for a certain number of internals, normally a multiple of
         // the short term RTT window.  Since both short and long term RTT trend higher this state results in the limit
@@ -240,10 +244,6 @@ public final class Gradient2Limit extends AbstractLimit {
             intervalsAbove = 0;
             this.longRtt.update(ignore -> (longRtt + shortRtt) / 2);
         }
-
-        shortRttSampleListener.addSample(shortRtt);
-        longRttSampleListener.addSample(longRtt);
-        queueSizeSampleListener.addSample(queueSize);
 
         // Rtt could be higher than rtt_noload because of smoothing rtt noload updates
         // so set to 1.0 to indicate no queuing.  Otherwise calculate the slope and don't
